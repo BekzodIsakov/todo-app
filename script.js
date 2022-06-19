@@ -23,6 +23,17 @@ const deleteTask = (taskId) => {
   renderTasks();
 };
 
+const toggleTaskCompletion = (taskId) => {
+  tasks = tasks.map((task) => ({
+    ...task,
+    isCompleted:
+      task.id === taskId ? (task.isCompleted ? false : true) : task.isCompleted,
+  }));
+
+  saveTasks();
+  renderTasks();
+};
+
 const addTask = () => {
   const { value } = newTask;
 
@@ -30,7 +41,7 @@ const addTask = () => {
     return;
   }
 
-  tasks.push({ id: Date.now().toString(), text: value, isCompleted: false });
+  tasks.push({ id: Date.now().toString(), text: value, isCompleted: true });
   localStorage.setItem("tasks", JSON.stringify(tasks));
   document.getElementById("new-task-input").value = "";
   renderTasks();
@@ -44,8 +55,18 @@ const renderTasks = () => {
 
   tasks.forEach((task) => {
     const taskTmp = document.importNode(taskTemplate.content, true);
-    taskTmp.getElementById("task-content").innerText = task.text;
-    taskTmp.getElementById("task-item").dataset.taskid = task.id;
+    const checkedIcon = taskTmp.getElementById("checked-icon");
+    const taskText = taskTmp.getElementById("task-content");
+    taskText.innerText = task.text;
+
+    if (task.isCompleted) {
+      taskText.classList.add("text-decoration-line-through", "text-black-50");
+      checkedIcon.classList.remove("bi-check-circle");
+      checkedIcon.classList.add("bi-check-circle-fill");
+    }
+
+    checkedIcon.parentNode.onclick = () => toggleTaskCompletion(task.id);
+
     taskTmp
       .getElementById("delete-task-btn")
       .addEventListener("click", () => deleteTask(task.id));

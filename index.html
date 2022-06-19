@@ -37,18 +37,14 @@
       </div>
 
       <div class="container mt-4">
-        <div id="tasks-list">
-         
-          
-        </div>
+        <div id="tasks-list"></div>
       </div>
     </main>
 
     <template id="task-template" >
-      <div class="container px-2" id="task-item" data-taskid="g">
+      <div class="container px-2" id="task-item" tabindex="0">
         <div id="task-item" class="border-bottom text-primary py-2 row">
           <div id="task-content" class="col overflow-hidden text-truncate">
-            write an essay on animal testing
           </div>
 
           <div class="col-auto user-select-none">
@@ -60,8 +56,8 @@
               <i class="bi bi-pencil-square lh-1"></i>
             </button>
 
-            <button class="btn py-1 px-2 d-inline-flex">
-              <i class="bi bi-check-circle lh-1"></i>
+            <button class="btn py-1 px-2 text-primary d-inline-flex">
+              <i id="checked-icon" class="bi bi-check-circle lh-1"></i>
             </button>
           </div>
         </div>
