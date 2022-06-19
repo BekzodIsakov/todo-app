@@ -44,15 +44,15 @@
       </div>
     </main>
 
-    <template id="task-template">
-      <div class="container px-2">
+    <template id="task-template" >
+      <div class="container px-2" id="task-item" data-taskid="g">
         <div id="task-item" class="border-bottom text-primary py-2 row">
           <div id="task-content" class="col overflow-hidden text-truncate">
             write an essay on animal testing
           </div>
 
-          <div class="col-auto">
-            <button class="btn py-1 px-2 d-inline-flex">
+          <div class="col-auto user-select-none">
+            <button id="delete-task-btn" class="btn py-1 px-2 d-inline-flex">
               <i class="bi bi-x-circle lh-1"></i>
             </button>
 

@@ -1,12 +1,7 @@
 const newTask = document.getElementById("new-task-input");
 const taskTemplate = document.getElementById("task-template");
 const addTaskBtn = document.getElementById("add-task");
-
-const tasks = [
-  { text: "pump the ball", id: 1 },
-  { text: "write an essay on animal testing", id: 2 },
-  { text: "cook the dinner", id: 3 },
-];
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
 newTask.addEventListener("keypress", (event) => {
   if (!newTask.value) {
@@ -18,6 +13,16 @@ newTask.addEventListener("keypress", (event) => {
   }
 });
 
+const saveTasks = () => {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+};
+
+const deleteTask = (taskId) => {
+  tasks = tasks.filter((task) => task.id !== taskId);
+  saveTasks();
+  renderTasks();
+};
+
 const addTask = () => {
   const { value } = newTask;
 
@@ -25,7 +30,8 @@ const addTask = () => {
     return;
   }
 
-  tasks.push({ text: value, id: Date.now().toString() });
+  tasks.push({ id: Date.now().toString(), text: value, isCompleted: false });
+  localStorage.setItem("tasks", JSON.stringify(tasks));
   document.getElementById("new-task-input").value = "";
   renderTasks();
 };
@@ -33,14 +39,16 @@ const addTask = () => {
 addTaskBtn.addEventListener("click", addTask);
 
 const renderTasks = () => {
-  console.log(tasks);
-
-  let tasksList = document.getElementById("tasks-list");
+  const tasksList = document.getElementById("tasks-list");
   tasksList.innerHTML = null;
 
   tasks.forEach((task) => {
     const taskTmp = document.importNode(taskTemplate.content, true);
     taskTmp.getElementById("task-content").innerText = task.text;
+    taskTmp.getElementById("task-item").dataset.taskid = task.id;
+    taskTmp
+      .getElementById("delete-task-btn")
+      .addEventListener("click", () => deleteTask(task.id));
     tasksList.appendChild(taskTmp);
   });
 };
