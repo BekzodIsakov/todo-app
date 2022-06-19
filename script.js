@@ -2,6 +2,8 @@ const newTask = document.getElementById("new-task-input");
 const taskTemplate = document.getElementById("task-template");
 const addTaskBtn = document.getElementById("add-task");
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+const deleteAllBtn = document.getElementById('delete-all-btn');
+const clearAllModalBbtn = document.getElementById('clearAll-Modal-btn');
 
 newTask.addEventListener("keypress", (event) => {
   if (!newTask.value) {
@@ -41,7 +43,7 @@ const addTask = () => {
     return;
   }
 
-  tasks.push({ id: Date.now().toString(), text: value, isCompleted: true });
+  tasks.push({ id: Date.now().toString(), text: value, isCompleted: false });
   localStorage.setItem("tasks", JSON.stringify(tasks));
   document.getElementById("new-task-input").value = "";
   renderTasks();
@@ -50,6 +52,8 @@ const addTask = () => {
 addTaskBtn.addEventListener("click", addTask);
 
 const renderTasks = () => {
+  tasks.length > 1 ? clearAllModalBbtn.classList.remove('d-none') : clearAllModalBbtn.classList.add('d-none');
+
   const tasksList = document.getElementById("tasks-list");
   tasksList.innerHTML = null;
 
@@ -77,5 +81,13 @@ const renderTasks = () => {
 function render() {
   renderTasks();
 }
+
+const clearAllTasks = () => {
+  tasks = [];
+  saveTasks();
+  renderTasks();
+}
+
+deleteAllBtn.onclick = clearAllTasks;
 
 render();

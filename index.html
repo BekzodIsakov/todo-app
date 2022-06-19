@@ -20,7 +20,7 @@
     <main class="container-md my-4">
       <h1 class="text-center text-primary mb-4">Tasks</h1>
 
-      <div class="container">
+      <div class="container mb-3">
         <div class="row g-2">
           <div class="col-12 col-sm-9">
             <input
@@ -36,7 +36,29 @@
         </div>
       </div>
 
-      <div class="container mt-4">
+      <!-- Button trigger modal -->
+      <div class="container d-grid justify-content-end">
+        <button type="button" id="clearAll-Modal-btn" class="d-none btn btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#clearAllModal">
+          Clear all
+        </button>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="clearAllModal" tabindex="-1" aria-labelledby="clearAllModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <h4 class="mt-2 pl-5">Are you sure?</h4>
+            </div>
+            <div class="modal-footer border-top-0">
+              <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" id='delete-all-btn' class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container mt-2">
         <div id="tasks-list"></div>
       </div>
     </main>
