@@ -15,8 +15,15 @@ const renderTasks = (editedTaskId) => {
   const tasksList = document.getElementById("tasks-list");
   tasksList.innerHTML = null;
 
-  tasks.forEach((task, index) => {
+  window.removeEventListener("click", (e) => {
+    if (!e.target.closest(".input-group")) {
+      renderTasks();
+    }
+  });
+
+  tasks.forEach((task) => {
     const taskTmp = document.importNode(taskTemplate.content, true);
+    const taskItem = taskTmp.getElementById("task-item");
     const taskText = taskTmp.getElementById("task-content");
     const completeBtn = taskTmp.getElementById("complete-task-btn");
     const editBtn = taskTmp.getElementById("edit-task-btn");
@@ -24,9 +31,10 @@ const renderTasks = (editedTaskId) => {
     const checkedIcon = completeBtn.firstElementChild;
 
     taskText.innerText = task.text;
+    taskItem.dataset.taskId = task.id;
 
     completeBtn.onclick = () => toggleTaskCompletion(task.id);
-    editBtn.onclick = () => editTask(task.id);
+    editBtn.onclick = (e) => editTask(e, task.id);
     deleteBtn.onclick = () => deleteTask(task.id);
 
     if (task.isCompleted) {
@@ -41,22 +49,37 @@ const renderTasks = (editedTaskId) => {
 
     if (editedTaskId === task.id) {
       input.value = task.text;
+      input.onkeydown = (e) => {
+        if (e.code == "Enter") {
+          confirmTaskEdit(task.id);
+        }
+      };
       tasksList.appendChild(inputTmp);
-      confirmEditBtn.onclick = () => confirmTaskEdit(index);
+      input.focus();
+      confirmEditBtn.onclick = () => confirmTaskEdit(task.id);
+
+      window.addEventListener("click", (e) => {
+        if (!e.target.closest(".input-group")) {
+          renderTasks();
+        }
+      });
     } else {
       tasksList.appendChild(taskTmp);
     }
   });
 };
 
-const confirmTaskEdit = (taskIndex) => {
+const confirmTaskEdit = (taskId) => {
   const editTaskInput = document.getElementById("edit-task-input");
 
-  if (tasks[taskIndex].text !== editTaskInput.value) {
-    tasks[taskIndex] = {...tasks[taskIndex], text: editTaskInput.value};
-    saveTasks();
-  }
+  if (!editTaskInput.value) return;
 
+  tasks = tasks.map((task) => ({
+    ...task,
+    text: task.id === taskId ? editTaskInput.value : task.text,
+  }));
+
+  saveTasks();
   renderTasks();
 };
 
@@ -91,7 +114,8 @@ const saveTasks = () => {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-const editTask = (taskId) => {
+const editTask = (e, taskId) => {
+  e.stopPropagation();
   renderTasks(taskId);
 };
 
