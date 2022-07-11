@@ -2,8 +2,8 @@ const taskTemplate = document.getElementById("task-template");
 const editInputTemplate = document.getElementById("edit-input-template");
 const newTaskInput = document.getElementById("new-task-input");
 const addTaskBtn = document.getElementById("add-task");
-const confirmDeleteAllBtn = document.getElementById("confirm-delete-all-btn");
 const deleteAllBtn = document.getElementById("clearAll-Modal-btn");
+const confirmDeleteAllBtn = document.getElementById("confirm-delete-all-btn");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
