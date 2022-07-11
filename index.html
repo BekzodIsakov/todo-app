@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Todo</title>
     <link rel="icon" href="./assets/card-checklist.svg" type="image/icon type">
+    <title>Todo</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -23,7 +23,7 @@
       <h1 class="text-center text-primary mb-4">Tasks</h1>
 
       <div class="container mb-3">
-        <div class="row g-2">
+        <div class="row gx-sm-2 gy-2 gy-sm-0">
           <div class="col-12 col-sm-9">
             <input
               type="text"
@@ -39,13 +39,20 @@
       </div>
 
       <!-- Button trigger modal -->
-      <div class="container d-grid justify-content-end">
-        <button type="button" id="clearAll-Modal-btn" class="d-none btn btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#clearAllModal">
-          Clear all
-        </button>
+      <div class="container px-4">
+        <div class="row justify-content-end">
+          <button type="button" id="clearAll-Modal-btn" class="col-4 col-sm-2 d-none btn btn-sm mr-3 text-danger text-nowrap" data-bs-toggle="modal" data-bs-target="#clearAllModal">
+            Clear all
+          </button>
+          
+          <button type="button" class="col-2 col-sm-1 btn btn-sm" data-bs-toggle="modal" data-bs-target="#settingsModal">
+            <i class="bi bi-gear-fill"></i>
+          </button>
+        </div>
       </div>
 
-      <!-- Modal -->
+      <!-- Modals -->
+      <!-- Delete-all modal -->
       <div class="modal fade" id="clearAllModal" tabindex="-1" aria-labelledby="clearAllModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -55,6 +62,25 @@
             <div class="modal-footer border-top-0">
               <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" id='confirm-delete-all-btn' class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings modal -->
+      <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div>
+                Show completed tasks
+              </div>
+              <div>
+                Drop completed tasks
+              </div>
+              <div>
+                Sound on/off
+              </div>
             </div>
           </div>
         </div>

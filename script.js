@@ -15,11 +15,13 @@ const renderTasks = (editedTaskId) => {
   const tasksList = document.getElementById("tasks-list");
   tasksList.innerHTML = null;
 
-  window.removeEventListener("click", (e) => {
+  const resolveMouseClick = (e) => {
     if (!e.target.closest(".input-group")) {
       renderTasks();
     }
-  });
+  };
+
+  window.removeEventListener("click", resolveMouseClick);
 
   tasks.forEach((task) => {
     const taskTmp = document.importNode(taskTemplate.content, true);
@@ -58,11 +60,7 @@ const renderTasks = (editedTaskId) => {
       input.focus();
       confirmEditBtn.onclick = () => confirmTaskEdit(task.id);
 
-      window.addEventListener("click", (e) => {
-        if (!e.target.closest(".input-group")) {
-          renderTasks();
-        }
-      });
+      window.addEventListener("click", resolveMouseClick);
     } else {
       tasksList.appendChild(taskTmp);
     }
