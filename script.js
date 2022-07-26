@@ -4,8 +4,32 @@ const newTaskInput = document.getElementById("new-task-input");
 const addTaskBtn = document.getElementById("add-task");
 const deleteAllBtn = document.getElementById("clearAll-Modal-btn");
 const confirmDeleteAllBtn = document.getElementById("confirm-delete-all-btn");
+const hideCompletedTasksSwitch = document.getElementById(
+  "hideCompletedTasksSwitch"
+);
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+let completedTasksHidden = JSON.parse(
+  localStorage.getItem("completedTasksHidden") || false
+);
+
+const handleCompletedTasksVisibility = (e) => {
+  localStorage.setItem("completedTasksHidden", e.target.checked);
+  completedTasksHidden = e.target.checked;
+  renderTasks();
+};
+
+const sortCompletedTasks = () => {
+  tasks.forEach((task, index) => {
+    if (task.isCompleted) {
+      tasks.push(task);
+      tasks.splice(index, 1);
+    }
+  });
+};
+
+sortCompletedTasks();
 
 const renderTasks = (editedTaskId) => {
   tasks.length > 1
@@ -62,7 +86,11 @@ const renderTasks = (editedTaskId) => {
 
       window.addEventListener("click", resolveMouseClick);
     } else {
-      tasksList.appendChild(taskTmp);
+      if (!task.isCompleted) {
+        tasksList.appendChild(taskTmp);
+      } else if (!completedTasksHidden) {
+        tasksList.appendChild(taskTmp);
+      }
     }
   });
 };
@@ -82,6 +110,14 @@ const confirmTaskEdit = (taskId) => {
 };
 
 function render() {
+  hideCompletedTasksSwitch.checked = completedTasksHidden;
+  hideCompletedTasksSwitch.onclick = handleCompletedTasksVisibility;
+  hideCompletedTasksSwitch.addEventListener('keydown', (e) => {
+    if (e.code === 'Enter') {
+      e.target.checked = !e.target.checked;
+      handleCompletedTasksVisibility(e);
+    }
+  })
   renderTasks();
 }
 

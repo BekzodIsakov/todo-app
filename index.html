@@ -51,7 +51,6 @@
         </div>
       </div>
 
-      <!-- Modals -->
       <!-- Delete-all modal -->
       <div class="modal fade" id="clearAllModal" tabindex="-1" aria-labelledby="clearAllModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -72,14 +71,30 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-body">
-              <div>
-                Show completed tasks
+              <h3 class="text-center text-primary">Settings</h3>
+              
+              <div class="container mb-2">
+                <div class="row">
+                  <div class="col">
+                    Hide completed tasks
+                  </div>
+
+                  <div class="col-1 form-check form-switch">
+                    <input class="form-check-input"" type="checkbox" role="switch" id="hideCompletedTasksSwitch">
+                  </div>
+                </div>
               </div>
-              <div>
-                Drop completed tasks
-              </div>
-              <div>
-                Sound on/off
+              
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                    Sound on
+                  </div>
+                  
+                  <div class="col-1 form-check form-switch">
+                    <input class="form-check-input"" type="checkbox" role="switch" id="turnSoundOff">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
