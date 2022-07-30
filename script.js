@@ -1,37 +1,45 @@
 const taskTemplate = document.getElementById("task-template");
 const editInputTemplate = document.getElementById("edit-input-template");
 const newTaskInput = document.getElementById("new-task-input");
-const addTaskBtn = document.getElementById("add-task");
 const deleteAllBtn = document.getElementById("clearAll-Modal-btn");
 const confirmDeleteAllBtn = document.getElementById("confirm-delete-all-btn");
 const hideCompletedTasksSwitch = document.getElementById(
   "hideCompletedTasksSwitch"
 );
+const toggleSoundSwitch = document.getElementById("toggeSoundSwitch");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-let completedTasksHidden = JSON.parse(
-  localStorage.getItem("completedTasksHidden") || false
+let areCompletedTasksHidden = JSON.parse(
+  localStorage.getItem("areCompletedTasksHidden") || false
 );
+let isSoundOn = JSON.parse(localStorage.getItem("isSoundOn")) ?? true;
 
-const handleCompletedTasksVisibility = (e) => {
-  localStorage.setItem("completedTasksHidden", e.target.checked);
-  completedTasksHidden = e.target.checked;
-  renderTasks();
-};
+const tickSound = new Audio("./assets/audio/done.wav");
+const deleteSound = new Audio("./assets/audio/delete.wav");
 
-const sortCompletedTasks = () => {
-  tasks.forEach((task, index) => {
-    if (task.isCompleted) {
-      tasks.push(task);
-      tasks.splice(index, 1);
+function init() {
+  hideCompletedTasksSwitch.checked = areCompletedTasksHidden;
+  hideCompletedTasksSwitch.onclick = handleCompletedTasksVisibility;
+  hideCompletedTasksSwitch.addEventListener("keydown", (e) => {
+    if (e.code === "Enter") {
+      e.target.checked = !e.target.checked;
+      handleCompletedTasksVisibility(e);
     }
   });
-};
 
-sortCompletedTasks();
+  setAppSound(isSoundOn);
+  toggleSoundSwitch.checked = isSoundOn;
+  toggleSoundSwitch.addEventListener("keydown", (e) => {
+    if (e.code === "Enter") {
+      e.target.checked = !e.target.checked;
+      switchAppSound(e);
+    }
+  });
 
-const renderTasks = (editedTaskId) => {
+  renderTasks();
+}
+
+function renderTasks(editedTaskId) {
   tasks.length > 1
     ? deleteAllBtn.classList.remove("d-none")
     : deleteAllBtn.classList.add("d-none");
@@ -39,11 +47,11 @@ const renderTasks = (editedTaskId) => {
   const tasksList = document.getElementById("tasks-list");
   tasksList.innerHTML = null;
 
-  const resolveMouseClick = (e) => {
+  function resolveMouseClick(e) {
     if (!e.target.closest(".input-group")) {
       renderTasks();
     }
-  };
+  }
 
   window.removeEventListener("click", resolveMouseClick);
 
@@ -60,7 +68,9 @@ const renderTasks = (editedTaskId) => {
     taskItem.dataset.taskId = task.id;
 
     completeBtn.onclick = () => toggleTaskCompletion(task.id);
-    editBtn.onclick = (e) => editTask(e, task.id);
+    editBtn.onclick = (e) => {
+      editTask(e, task.id);
+    };
     deleteBtn.onclick = () => deleteTask(task.id);
 
     if (task.isCompleted) {
@@ -88,40 +98,57 @@ const renderTasks = (editedTaskId) => {
     } else {
       if (!task.isCompleted) {
         tasksList.appendChild(taskTmp);
-      } else if (!completedTasksHidden) {
+      } else if (!areCompletedTasksHidden) {
         tasksList.appendChild(taskTmp);
       }
     }
   });
-};
+}
 
-const confirmTaskEdit = (taskId) => {
-  const editTaskInput = document.getElementById("edit-task-input");
-
-  if (!editTaskInput.value) return;
-
-  tasks = tasks.map((task) => ({
-    ...task,
-    text: task.id === taskId ? editTaskInput.value : task.text,
-  }));
-
-  saveTasks();
-  renderTasks();
-};
-
-function render() {
-  hideCompletedTasksSwitch.checked = completedTasksHidden;
-  hideCompletedTasksSwitch.onclick = handleCompletedTasksVisibility;
-  hideCompletedTasksSwitch.addEventListener('keydown', (e) => {
-    if (e.code === 'Enter') {
-      e.target.checked = !e.target.checked;
-      handleCompletedTasksVisibility(e);
-    }
-  })
+function saveAndRenderTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
   renderTasks();
 }
 
-const addTask = () => {
+function handleCompletedTasksVisibility(e) {
+  localStorage.setItem("areCompletedTasksHidden", e.target.checked);
+  tickSound.play();
+  areCompletedTasksHidden = e.target.checked;
+  renderTasks();
+}
+
+function setAppSound(isSoundOn) {
+  [tickSound, deleteSound].forEach((track) => {
+    track.muted = !isSoundOn;
+  });
+}
+
+function switchAppSound(e) {
+  localStorage.setItem("isSoundOn", e.target.checked);
+  setAppSound(e.target.checked);
+}
+
+const confirmTaskEdit = (currentTaskId) => {
+  const editTaskInput = document.getElementById("edit-task-input");
+
+  if (!editTaskInput.value) return;
+  const handleTextChange = (taskId, taskText) => {
+    if (taskId === currentTaskId && editTaskInput.value !== taskText) {
+      tickSound.play();
+      return editTaskInput.value;
+    }
+    return taskText;
+  };
+
+  tasks = tasks.map((task) => ({
+    ...task,
+    text: handleTextChange(task.id, task.text),
+  }));
+
+  saveAndRenderTasks();
+};
+
+function addTask() {
   const { value } = newTaskInput;
 
   if (!value) {
@@ -132,7 +159,7 @@ const addTask = () => {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   document.getElementById("new-task-input").value = "";
   renderTasks();
-};
+}
 
 newTaskInput.addEventListener("keypress", (event) => {
   if (!newTaskInput.value) {
@@ -144,40 +171,43 @@ newTaskInput.addEventListener("keypress", (event) => {
   }
 });
 
-const saveTasks = () => {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-};
-
-const editTask = (e, taskId) => {
+function editTask(e, taskId) {
   e.stopPropagation();
   renderTasks(taskId);
-};
+}
 
-const deleteTask = (taskId) => {
+function deleteTask(taskId) {
+  deleteSound.play();
   tasks = tasks.filter((task) => task.id !== taskId);
-  saveTasks();
-  renderTasks();
-};
+  saveAndRenderTasks();
+}
 
-const toggleTaskCompletion = (taskId) => {
-  tasks = tasks.map((task) => ({
-    ...task,
-    isCompleted:
-      task.id === taskId ? (task.isCompleted ? false : true) : task.isCompleted,
-  }));
+function toggleTaskCompletion(taskId) {
+  tasks = tasks.map((task) => {
+    if (task.id === taskId && !task.isCompleted) {
+      tickSound.play();
+    }
 
-  saveTasks();
-  renderTasks();
-};
+    return {
+      ...task,
+      isCompleted:
+        task.id === taskId
+          ? task.isCompleted
+            ? false
+            : true
+          : task.isCompleted,
+    };
+  });
 
-addTaskBtn.addEventListener("click", addTask);
+  saveAndRenderTasks();
+}
 
 const clearAllTasks = () => {
   tasks = [];
-  saveTasks();
-  renderTasks();
+  deleteSound.play();
+  saveAndRenderTasks();
 };
 
 confirmDeleteAllBtn.onclick = clearAllTasks;
 
-render();
+init();
