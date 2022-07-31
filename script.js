@@ -2,7 +2,6 @@ const taskTemplate = document.getElementById("task-template");
 const editInputTemplate = document.getElementById("edit-input-template");
 const newTaskInput = document.getElementById("new-task-input");
 const deleteAllBtn = document.getElementById("clearAll-Modal-btn");
-const confirmDeleteAllBtn = document.getElementById("confirm-delete-all-btn");
 const hideCompletedTasksSwitch = document.getElementById(
   "hideCompletedTasksSwitch"
 );
@@ -207,7 +206,5 @@ const clearAllTasks = () => {
   deleteSound.play();
   saveAndRenderTasks();
 };
-
-confirmDeleteAllBtn.onclick = clearAllTasks;
 
 init();
